@@ -27,9 +27,11 @@ output "fqdn_records" {
   description = "List fqdn records"
   value = flatten([
     for record in aws_acm_certificate.create_acm_certificate[*].domain_validation_options : [
-      for rec in record : [
-        rec.resource_record_name
-      ]
+      for rec in record : [{
+        name  = rec.resource_record_name
+        value = rec.resource_record_value
+        value = rec.resource_record_type
+      }]
     ]
   ])
 }
