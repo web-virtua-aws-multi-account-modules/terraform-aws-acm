@@ -42,7 +42,7 @@ resource "aws_acm_certificate" "create_acm_certificate" {
 
 module "create_records_domain_validation" {
   source                      = "web-virtua-aws-multi-account-modules/route53/aws"
-  set_one_zone_id_all_records = var.zone_id_route53
+  set_one_zone_id_all_records = var.zone_id_fqdn_records != null ? var.zone_id_fqdn_records : var.zone_id_route53
 
   records = flatten([
     for record in aws_acm_certificate.create_acm_certificate[*].domain_validation_options : [

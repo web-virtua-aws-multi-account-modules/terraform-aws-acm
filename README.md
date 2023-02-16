@@ -52,10 +52,31 @@ provider "aws" {
 
 ```hcl
 module "acm_certificate_test_eks_luby_me" {
-  source           = "web-virtua-aws-multi-account-modules/acm/aws"
+  source          = "web-virtua-aws-multi-account-modules/acm/aws"
   zone_id_route53 = data.aws_route53_zone.hosted_zone.zone_id
-  name_prefix = "acm-test-dominio.com"
-  master_domain = "test.com.br"
+  name_prefix     = "acm-test-dominio.com"
+  master_domain   = "test.com.br"
+
+  alternatives_domains = [
+    "www.test.com.br"
+  ]
+
+  providers = {
+    aws = aws.alias_profile_b
+  }
+}
+```
+
+### Create ACM certificate with domain record www and the fqdn records in other AWS account
+
+```hcl
+module "acm_certificate_test_eks_luby_me" {
+  source               = "web-virtua-aws-multi-account-modules/acm/aws"
+  zone_id_route53      = data.aws_route53_zone.hosted_zone.zone_id
+  zone_id_fqdn_records = "Z082...QYIK"
+  name_prefix          = "acm-test-dominio.com"
+  master_domain        = "test.com.br"
+
   alternatives_domains = [
     "www.test.com.br"
   ]
@@ -72,7 +93,8 @@ module "acm_certificate_test_eks_luby_me" {
 |------|-------------|------|---------|:--------:|:--------|
 | name_prefix | `string` | `-` | yes | Name prefix to resources | `-` |
 | master_domain | `string` | `-` | yes | Master domain | `-` |
-| zone_id_route53 | `string` | `-` | yes | Zone ID of the Route 53 AWS | `-` |
+| zone_id_route53 | `string` | `-` | no | Zone ID of the Route 53 AWS, if used this variable, the fqdn records will be created in this zone ID set | `-` |
+| zone_id_fqdn_records | `string` | `-` | yes | Zone ID of the Route 53 AWS | `-` |
 | alternatives_domains | `list(string)` | `null` | no | Alternatives domains | `-` |
 | validation_method | `string` | `DNS` | no | Validation method, can be DNS, EMAIL or NONE, NONE is used when import certificate | `*`DNS <br> `*`EMAIL <br> `*`NONE |
 | validation_option | `object` | `null` | no | Optional configuration block used to specify information about the initial validation of each domain name | `-` |

@@ -13,6 +13,12 @@ variable "zone_id_route53" {
   type        = string
 }
 
+variable "zone_id_fqdn_records" {
+  description = "Zone ID of the Route 53 AWS, if used this variable, the fqdn records will be created in this zone ID set"
+  type        = string
+  default = null
+}
+
 variable "alternatives_domains" {
   description = "Alternatives domains to master domain"
   type        = list(string)
