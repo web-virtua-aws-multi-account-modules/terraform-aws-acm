@@ -11,6 +11,7 @@ variable "master_domain" {
 variable "zone_id_route53" {
   description = "Zone ID of the Route 53 AWS"
   type        = string
+  default     = null
 }
 
 variable "make_fqdn_records" {

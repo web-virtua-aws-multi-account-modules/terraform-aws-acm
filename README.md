@@ -101,7 +101,7 @@ module "acm_certificate_test_eks_luby_me" {
 |------|-------------|------|---------|:--------:|:--------|
 | name_prefix | `string` | `-` | yes | Name prefix to resources | `-` |
 | master_domain | `string` | `-` | yes | Master domain | `-` |
-| zone_id_route53 | `string` | `-` | yes | Zone ID of the Route 53 AWS | `-` |
+| zone_id_route53 | `string` | `-` | no | Zone ID of the Route 53 AWS | `-` |
 | make_fqdn_records | `bool` | `true` | no | If true create the fqdn records | `*`false <br> `*`true |
 | make_acm_validation | `bool` | `true` | no | If true create the ACM validation | `*`false <br> `*`true |
 | alternatives_domains | `list(string)` | `null` | no | Alternatives domains | `-` |
@@ -150,3 +150,4 @@ variable "validation_option" {
 | `acm_certificate_domain_validation_options` | ACM certificate domain validation options |
 | `records_domain_validation` | Records domain validation |
 | `acm_certificate_validation` | ACM certificate validation |
+| `fqdn_records` | List fqdn records |
