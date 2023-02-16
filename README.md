@@ -67,15 +67,23 @@ module "acm_certificate_test_eks_luby_me" {
 }
 ```
 
-### Create ACM certificate with domain record www and the fqdn records in other AWS account
+### Create ACM certificate with domain record www without fqdn records
+* OBS: If necessary validate a record in other AWS account will be necessary make some steps:
+1. Set the make_fqdn_records and make_acm_validation variable as false
+2. Execute the module to create ACM
+3. Get the output with fqdn names
+4. Make the new records with the fqdn names in account wished
+5. Set the make_acm_validation variable as true and keep make_fqdn_records variable as false
+6. Execute again the module to create ACM
 
 ```hcl
 module "acm_certificate_test_eks_luby_me" {
-  source               = "web-virtua-aws-multi-account-modules/acm/aws"
-  zone_id_route53      = data.aws_route53_zone.hosted_zone.zone_id
-  zone_id_fqdn_records = "Z082...QYIK"
-  name_prefix          = "acm-test-dominio.com"
-  master_domain        = "test.com.br"
+  source              = "web-virtua-aws-multi-account-modules/acm/aws"
+  zone_id_route53     = data.aws_route53_zone.hosted_zone.zone_id
+  make_fqdn_records   = false
+  make_acm_validation = false
+  name_prefix         = "acm-test-dominio.com"
+  master_domain       = "test.com.br"
 
   alternatives_domains = [
     "www.test.com.br"
@@ -93,8 +101,9 @@ module "acm_certificate_test_eks_luby_me" {
 |------|-------------|------|---------|:--------:|:--------|
 | name_prefix | `string` | `-` | yes | Name prefix to resources | `-` |
 | master_domain | `string` | `-` | yes | Master domain | `-` |
-| zone_id_route53 | `string` | `-` | no | Zone ID of the Route 53 AWS, if used this variable, the fqdn records will be created in this zone ID set | `-` |
-| zone_id_fqdn_records | `string` | `-` | yes | Zone ID of the Route 53 AWS | `-` |
+| zone_id_route53 | `string` | `-` | yes | Zone ID of the Route 53 AWS | `-` |
+| make_fqdn_records | `bool` | `true` | no | If true create the fqdn records | `*`false <br> `*`true |
+| make_acm_validation | `bool` | `true` | no | If true create the ACM validation | `*`false <br> `*`true |
 | alternatives_domains | `list(string)` | `null` | no | Alternatives domains | `-` |
 | validation_method | `string` | `DNS` | no | Validation method, can be DNS, EMAIL or NONE, NONE is used when import certificate | `*`DNS <br> `*`EMAIL <br> `*`NONE |
 | validation_option | `object` | `null` | no | Optional configuration block used to specify information about the initial validation of each domain name | `-` |

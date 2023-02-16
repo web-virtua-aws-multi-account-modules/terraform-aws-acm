@@ -13,10 +13,16 @@ variable "zone_id_route53" {
   type        = string
 }
 
-variable "zone_id_fqdn_records" {
-  description = "Zone ID of the Route 53 AWS, if used this variable, the fqdn records will be created in this zone ID set"
-  type        = string
-  default = null
+variable "make_fqdn_records" {
+  description = "If true create the fqdn records"
+  type        = bool
+  default     = true
+}
+
+variable "make_acm_validation" {
+  description = "If true create the ACM validation"
+  type        = bool
+  default     = true
 }
 
 variable "alternatives_domains" {

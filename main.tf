@@ -41,8 +41,12 @@ resource "aws_acm_certificate" "create_acm_certificate" {
 }
 
 module "create_records_domain_validation" {
-  source                      = "web-virtua-aws-multi-account-modules/route53/aws"
-  set_one_zone_id_all_records = var.zone_id_fqdn_records != null ? var.zone_id_fqdn_records : var.zone_id_route53
+  count = var.make_fqdn_records ? 1 : 0
+
+  source  = "web-virtua-aws-multi-account-modules/route53/aws"
+  version = ">=1.0.0"
+
+  set_one_zone_id_all_records = var.zone_id_route53
 
   records = flatten([
     for record in aws_acm_certificate.create_acm_certificate[*].domain_validation_options : [
@@ -64,15 +68,22 @@ module "create_records_domain_validation" {
 }
 
 resource "aws_acm_certificate_validation" "create_acm_certificate_validation" {
-  certificate_arn         = aws_acm_certificate.create_acm_certificate.arn
-  validation_record_fqdns = module.create_records_domain_validation.records_fqdn
+  count = var.make_acm_validation ? 1 : 0
+
+  certificate_arn = aws_acm_certificate.create_acm_certificate.arn
+  validation_record_fqdns = flatten([
+    for record in aws_acm_certificate.create_acm_certificate[*].domain_validation_options : [
+      for rec in record : [
+        rec.resource_record_name
+      ]
+    ]
+  ])
 
   lifecycle {
     create_before_destroy = false
   }
 
   depends_on = [
-    aws_acm_certificate.create_acm_certificate,
-    module.create_records_domain_validation
+    aws_acm_certificate.create_acm_certificate
   ]
 }

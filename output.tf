@@ -15,10 +15,21 @@ output "acm_certificate_domain_validation_options" {
 
 output "records_domain_validation" {
   description = "Records domain validation"
-  value       = module.create_records_domain_validation
+  value       = try(module.create_records_domain_validation[0], null)
 }
 
 output "acm_certificate_validation" {
   description = "ACM certificate validation"
-  value       = aws_acm_certificate_validation.create_acm_certificate_validation
+  value       = try(aws_acm_certificate_validation.create_acm_certificate_validation[0], null)
+}
+
+output "fqdn_records" {
+  description = "List fqdn records"
+  value = flatten([
+    for record in aws_acm_certificate.create_acm_certificate[*].domain_validation_options : [
+      for rec in record : [
+        rec.resource_record_name
+      ]
+    ]
+  ])
 }
