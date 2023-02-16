@@ -30,7 +30,7 @@ output "fqdn_records" {
       for rec in record : [{
         name  = rec.resource_record_name
         value = rec.resource_record_value
-        value = rec.resource_record_type
+        type  = rec.resource_record_type
       }]
     ]
   ])
